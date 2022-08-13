@@ -3,8 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -25,7 +29,16 @@ func main() {
 
 	// Echo instance start
 	e := echo.New()
+
+	//ALLOW CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowMethods: []string{echo.GET},
+	}))
 	e.GET("/foxes", getFoxes)
+	e.GET("/foxes/code/:code", getFoxesByCode)
+	e.GET("/foxes/description/:name", getFoxesByDescription)
 	// e.POST("/foxes", createFoxes)
 
 	// Start server on port 8080
@@ -45,13 +58,58 @@ func generateFoxes() {
 	// 	Url:         "assets/images/404.png",
 	// })
 
-	fmt.Println("> [generateFoxes] Foxed Loaded:", foxes)
+	fmt.Println("> [generateFoxes] Foxed Loaded!")
 }
 
 func getFoxes(c echo.Context) error {
 	fmt.Println("> [getFoxes]...")
-	fmt.Println("> [getFoxes] foxes:", foxes)
+	// fmt.Println("> [getFoxes] foxes:", foxes)
 	return c.JSON(200, foxes)
+}
+
+func getFoxesByDescription(c echo.Context) error {
+	fmt.Println("> [getFoxesByDescription]...")
+	description := c.Param("name")
+	fmt.Println("> [getFoxesByDescription] Received: ", description)
+
+	temp_foxes := []Foxes{}
+	for _, fox := range foxes {
+		if strings.Contains(strings.ToUpper(fox.Description), strings.ToUpper(description)) {
+			temp_foxes = append(temp_foxes, fox)
+		}
+	}
+	if len(temp_foxes) > 0 {
+		fmt.Println("> [getFoxesByDescription] OK")
+		return c.JSON(http.StatusOK, temp_foxes)
+	}
+
+	return c.String(http.StatusNotFound, "Fox not found")
+}
+
+func getFoxesByCode(c echo.Context) error {
+	fmt.Println("> [getFoxesByCode]...")
+	codeString := c.Param("code")
+	fmt.Println("> [getFoxesByCode] Received: ", codeString)
+	code, err := strconv.Atoi(codeString)
+	if err != nil {
+		fmt.Println("> [getFoxesByCode]strconv.Atoi err:", err)
+		return c.String(http.StatusBadRequest, "Invalid fox code")
+	}
+
+	fmt.Println("> [getFoxesByCode] Fox Code:", code)
+
+	temp_foxes := []Foxes{}
+	for _, fox := range foxes {
+		if fox.Code == code {
+			temp_foxes = append(temp_foxes, fox)
+		}
+	}
+	if len(temp_foxes) > 0 {
+		fmt.Println("> [getFoxesByCode] OK")
+		return c.JSON(http.StatusOK, temp_foxes)
+	}
+
+	return c.String(http.StatusNotFound, "Fox not found")
 }
 
 func createFoxes(c echo.Context) error {
