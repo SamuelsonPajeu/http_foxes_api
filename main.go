@@ -19,10 +19,16 @@ var foxes []Foxes
 func main() {
 	fmt.Println(">\n\n --------------------------------------------------")
 	fmt.Println(">[main]...")
+
+	// Load foxes from db
 	generateFoxes()
+
+	// Echo instance start
 	e := echo.New()
 	e.GET("/foxes", getFoxes)
-	e.POST("/foxes", createFoxes)
+	// e.POST("/foxes", createFoxes)
+
+	// Start server on port 8080
 	e.Logger.Fatal(e.Start(":8080"))
 
 }
@@ -30,7 +36,9 @@ func main() {
 func generateFoxes() {
 	fmt.Println("> [generateFoxes]...")
 
+	// Load foxes from db
 	loadFoxes()
+
 	// foxes = append(foxes, Foxes{
 	// 	Code:        404,
 	// 	Description: "Not Found",
@@ -53,7 +61,7 @@ func createFoxes(c echo.Context) error {
 		return err
 	}
 	foxes = append(foxes, *fox)
-	// saveFox(*fox)
+	saveFox(*fox)
 	return c.JSON(200, fox)
 }
 
