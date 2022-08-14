@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -24,6 +25,8 @@ func main() {
 	fmt.Println(">\n\n --------------------------------------------------")
 	fmt.Println(">[main]...")
 
+	port := os.Getenv("PORT")
+
 	// Load foxes from db
 	generateFoxes()
 
@@ -41,8 +44,8 @@ func main() {
 	e.GET("/foxes/description/:name", getFoxesByDescription)
 	// e.POST("/foxes", createFoxes)
 
-	// Start server on port 8080
-	e.Logger.Fatal(e.Start(":8080"))
+	// Start server
+	e.Logger.Fatal(e.Start(":" + port))
 
 }
 
