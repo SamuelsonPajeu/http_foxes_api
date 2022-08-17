@@ -135,7 +135,7 @@ func loadFoxes() error {
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM foxes")
+	rows, err := db.Query("SELECT * FROM foxes ORDER BY code ASC")
 	if err != nil {
 		fmt.Println("> [loadFoxes]db rows err:", err)
 		return err
