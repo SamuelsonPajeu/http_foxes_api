@@ -1,6 +1,8 @@
 # Http Foxes (API)
 A REST API that retrieve HTTP Status code with funny foxes images
 
+![Build](https://github.com/SamuelsonPajeu/http_foxes_api/actions/workflows/go.yml/badge.svg)
+
 ## Install
 ```
 go run ./main.go
