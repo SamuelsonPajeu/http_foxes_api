@@ -9,6 +9,7 @@ go run ./main.go
 ```
 
 ## Usage
+- LIVE APPLICATION: https://http-foxes-api.onrender.com/foxes
 - ENDPOINT: localhost:8080/foxes
 
 #### Listing existing foxes as a JSON array
